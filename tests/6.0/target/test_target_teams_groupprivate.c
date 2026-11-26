@@ -14,7 +14,7 @@
 
 
 int test_target_groupprivate(){
-    int group_sum;
+    static int group_sum;  // groupprivate needs static storage duration
     #pragma omp groupprivate(group_sum)
     int errors = 0;
     int host_sum = 0;
