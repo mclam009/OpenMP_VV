@@ -71,7 +71,7 @@ fi
 app=$1
 
 set +e
-output+=$(env ${env_data[@]} timeout $SOLLVE_TIMELIMIT "$app" 2>&1)
+output+=$(env ${env_data[@]+"${env_data[@]}"} timeout $SOLLVE_TIMELIMIT "$app" 2>&1)
 status=$?
 set -e
 
