@@ -9,7 +9,10 @@
 set -e
 set -u
 
-export OMP_THREAD_LIMIT=$(lscpu -p | grep -c "^[0-9]")
+# Not the number of CPUs (which gave a 12-core machine a limit of 12, so that tests that ask for up to 64 threads got
+# fewer and failed on assertions about the count): 64 is the largest count that a test names, and still keeps a test
+# that asks for thousands of threads from getting them. PSTL_VV_THREAD_LIMIT sets another value.
+export OMP_THREAD_LIMIT=${PSTL_VV_THREAD_LIMIT:-64}
 
 # Providing option to set time limit through SOLLVE_TIMELIMIT env
 export SOLLVE_TIMELIMIT=${SOLLVE_TIMELIMIT:-60}
