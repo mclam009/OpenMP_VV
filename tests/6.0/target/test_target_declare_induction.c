@@ -23,7 +23,7 @@ int test_target_declare_induction() {
 	for (int i = 0; i < N; i++){
 		arr[i] = 0;
 	}
-	#pragma declare induction(user_def_induc: int) inductor(omp_var=omp_var * 2 * omp_step) collector(pow(2 * omp_step, omp_idx))
+	#pragma omp declare induction(user_def_induc: int) inductor(omp_var=omp_var * 2 * omp_step) collector(pow(2 * omp_step, omp_idx))
 
         #pragma omp target parallel for induction(step(step_var), user_def_induc : induction_var) map(tofrom: arr[:N])
         for (int i = 0; i < N; i++) {
