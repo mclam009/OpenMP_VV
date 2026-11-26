@@ -35,6 +35,9 @@ int test_target_data() {
   {
     #pragma omp target map(tofrom : a) nowait
     a = work_function(a);
+    // nogroup: no implicit taskgroup, so without this the constituent target_exit_data task may map a back before
+    // the nested target task has run (OpenMP 6.0, 15.7)
+    #pragma omp taskwait
   }
   check_function(a, &errors);
   a = 0;
