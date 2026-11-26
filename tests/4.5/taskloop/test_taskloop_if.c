@@ -37,11 +37,19 @@ int test_taskloop_if(int THRESHOLD) {
   int errors = 0;
   
   int thread_ids[NUM_TASKS];
+  // pstl-omp: with if(true) the tasks are deferrable, and the specification lets one thread of the team, the
+  // encountering one or another, run all of them, so that case checks only that every iteration ran, and reports one
+  // thread as a warning. With if(false) the tasks are undeferred, and the test still checks that one thread ran them.
+  // The distinct negative initial values make that check fail, too, if an iteration did not run.
+  int num_threads = 0, all_ran = 1;
+  for (int i = 0; i < NUM_TASKS; i++)
+    thread_ids[i] = -1 - i;
 
   #pragma omp parallel num_threads(NUM_THREADS)
   {
   	#pragma omp single
     	{	
+        	num_threads = omp_get_num_threads();
         	#pragma omp taskloop if(M == THRESHOLD)
       		for (int i = 0; i < NUM_TASKS; i++) {
 	 		thread_ids[i] = omp_get_thread_num();
@@ -50,7 +58,13 @@ int test_taskloop_if(int THRESHOLD) {
   } 
   
   if (M ==  THRESHOLD) {
-    if (thread_ids_are_same(thread_ids, NUM_TASKS) != 0) {
+    OMPVV_WARNING_IF(num_threads > 1 && thread_ids_are_same(thread_ids, NUM_TASKS),
+                     "One of %d threads ran all %d iterations of the deferrable tasks", num_threads, NUM_TASKS);
+    for (int i = 0; i < NUM_TASKS; i++) {
+      if (thread_ids[i] < 0 || thread_ids[i] >= num_threads)
+        all_ran = 0;
+    }
+    if (!all_ran) {
       errors++; 
     }
   } else if (M != THRESHOLD) {
