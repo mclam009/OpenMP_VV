@@ -39,13 +39,13 @@ int testTaskgraphHeterogeneous(void)
                 {
                     ++x;
 
-                    # pragma omp target nowait map(tofrom: y) depend(out: y) shared(y)
+                    # pragma omp target nowait map(tofrom: y) depend(out: y)
                         ++y;
 
                     # pragma omp task depend(out: y) shared(y)
                         ++y;
 
-                    # pragma omp target nowait map(tofrom: y) depend(out: y) shared(y)
+                    # pragma omp target nowait map(tofrom: y) depend(out: y)
                         ++y;
                 }
             }
