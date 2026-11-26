@@ -21,7 +21,7 @@ int host_func() {
 }
 
 int test_target_groupprivate_devicetype_nohost(){
-    int group_sum;
+    static int group_sum;  // groupprivate needs static storage duration
     #pragma omp groupprivate(group_sum) device_type(nohost)
     int errors = 0;
     int team_sum = 0;
