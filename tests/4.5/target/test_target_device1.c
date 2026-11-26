@@ -45,9 +45,8 @@ int main() {
   OMPVV_TEST_OFFLOADING;
   int TotGpus = omp_get_num_devices();
   OMPVV_WARNING_IF(TotGpus < 1, "Test requires non-host devices, but none were found. \n This test will be skipped.\n");
-  if (TotGpus < 1) {
-    return OMPVV_SKIPPED_EXIT_CODE;
-  }
+  // Report the skip, as the harness recognises it by the "Test skipped" line (a bare return gave exit code 101 and FAIL)
+  OMPVV_CHECK_TO_SKIP(TotGpus < 1)
   int errors = 0;
   for (int gpu = 0; gpu < TotGpus; ++gpu) {
     OMPVV_TEST_AND_SET_VERBOSE(errors, (Runtst(gpu) != 0)); 
